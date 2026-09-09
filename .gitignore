@@ -1,2 +1,12 @@
 # cache and other artifacts produced by Lean's Lake build tool
 .lake/
+
+# `dafny run` leaves the generated C# project next to the source
+dafny/obj/
+dafny/*.cs
+dafny/*.csproj
+dafny/*.dll
+dafny/*.pdb
+dafny/*.deps.json
+dafny/*.runtimeconfig.json
+dafny/Intro

@@ -1,0 +1,42 @@
+{
+  "name": "lean-dafny-trial",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  // Dafny compiles to C# by default, so `dafny run` needs the .NET SDK.
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": { "version": "8.0" }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "containerEnv": {
+    "DAFNY_VERSION": "4.11.0",
+    // Set to "false" for a lighter container (skips the ~6 GB Mathlib cache).
+    "INSTALL_MATHLIB": "true"
+  },
+
+  "remoteEnv": {
+    "PATH": "${containerEnv:HOME}/.elan/bin:${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "leanprover.lean4",
+        "dafny-lang.ide-vscode"
+      ],
+      "settings": {
+        "dafny.languageServerLaunchArgs": ["--verify-on:Save"],
+        "editor.formatOnSave": true,
+        "files.insertFinalNewline": true
+      }
+    }
+  },
+
+  // Mathlib's oleans plus the Lean toolchain need real disk.
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  }
+}
