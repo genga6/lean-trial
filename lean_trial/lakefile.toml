@@ -1,0 +1,10 @@
+name = "lean_trial"
+version = "0.1.0"
+defaultTargets = ["lean_trial"]
+
+[[lean_lib]]
+name = "LeanTrial"
+
+[[lean_exe]]
+name = "lean_trial"
+root = "Main"
