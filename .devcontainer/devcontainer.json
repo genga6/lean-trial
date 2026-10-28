@@ -1,16 +1,12 @@
 {
-  "name": "lean-dafny-trial",
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "name": "lean-trial",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu24.04",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
-        "leanprover.lean4",
-        "dafny-lang.ide-vscode"
-      ],
-      "settings": {
-        "dafny.dafnyPath": "/home/codespace/.local/opt/dafny/dafny"
-      }
+        "leanprover.lean4"
+      ]
     }
   }
 }
