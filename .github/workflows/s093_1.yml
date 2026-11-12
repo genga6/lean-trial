@@ -1,0 +1,55 @@
+name: S093-1
+
+on:
+  push:
+    paths:
+      - "lean_trial/**"
+      - "verification/S093_1/**"
+      - ".github/workflows/s093_1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # 論文の LaTeX ソース。付録 D.3 の一覧の出典
+  PAPER_REPOSITORY: t46/paper-pre-training-different-modality-offline-rl
+  PAPER_COMMIT: 7ee06ab8aeb307829ca01cdb952bd355d5917ad6
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Build (全定理を kernel が検査する)
+        working-directory: lean_trial
+        run: lake build
+
+      - name: 依存する公理を出力する
+        working-directory: lean_trial
+        run: |
+          mkdir -p ../out
+          lean --version | tee ../out/lean_version.txt
+          lake env lean LeanTrial/S093_1.lean | tee ../out/axioms.txt
+          ! grep -q "sorryAx" ../out/axioms.txt
+
+      - name: Lean の一覧を、論文の付録 D.3 と照合する
+        run: |
+          curl -sSfL "https://raw.githubusercontent.com/${PAPER_REPOSITORY}/${PAPER_COMMIT}/main.tex" -o out/main.tex
+          sha256sum out/main.tex lean_trial/LeanTrial/S093_1.lean | tee out/sha256.txt
+          python3 verification/S093_1/check_transcription.py out/main.tex lean_trial/LeanTrial/S093_1.lean | tee out/transcription.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: s093-1-${{ github.run_id }}
+          path: |
+            out/lean_version.txt
+            out/axioms.txt
+            out/sha256.txt
+            out/transcription.txt
